@@ -115,9 +115,12 @@ run:
 ############################################################
 # Generate manifests
 ############################################################
+.PHONY: controller-gen-0.6.1
+controller-gen-0.6.1: ## Download controller-gen locally if necessary.
+	$(call go-get-tool,sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)
 
 .PHONY: manifests
-manifests: kustomize controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+manifests: kustomize controller-gen-0.6.1 ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) crd rbac:roleName=governance-policy-propagator paths="./..." output:crd:artifacts:config=deploy/crds output:rbac:artifacts:config=deploy/rbac
 	mv deploy/crds/policy.open-cluster-management.io_policies.yaml deploy/crds/kustomize/policy.open-cluster-management.io_policies.yaml
 	# Add a newline so that the format matches what kubebuilder generates
